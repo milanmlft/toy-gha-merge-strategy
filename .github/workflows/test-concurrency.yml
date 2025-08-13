@@ -1,0 +1,40 @@
+name: Test Concurrency Group Behavior
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Show workflow info
+        run: |
+          echo "Workflow run ID: ${{ github.run_id }}"
+          echo "Workflow run number: ${{ github.run_number }}"
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Started at: $(date)"
+
+      - name: Simulate long-running process
+        run: |
+          echo "Starting long-running process..."
+          for i in {1..30}; do
+            echo "Step $i/30 - Processing... (waiting 10 seconds)"
+            sleep 10
+          done
+          echo "Long-running process completed!"
+
+      - name: Final step
+        run: |
+          echo "Workflow completed successfully at: $(date)"
+          echo "This workflow was part of concurrency group: ${{ github.workflow }}-${{ github.ref }}"
