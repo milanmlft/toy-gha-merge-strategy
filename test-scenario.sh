@@ -44,14 +44,12 @@ Expected behavior:
 Commit created at: $(date)"
 
 	echo "✅ Commit $i created"
+	echo "🔄 Pushing commit $i to trigger workflow..."
+	git push origin "$current_branch"
 
 	# Small delay to make commits distinct
 	sleep 1
 done
-
-echo ""
-echo "🔄 Pushing all commits to trigger workflows..."
-git push origin "$current_branch"
 
 echo ""
 echo "✅ Done! Check your GitHub Actions tab to see the concurrency behavior:"
